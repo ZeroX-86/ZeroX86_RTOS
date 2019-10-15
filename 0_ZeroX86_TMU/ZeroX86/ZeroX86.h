@@ -36,15 +36,19 @@ typedef enum
 	TASK_ST_WAITING,	
 }task_stat_t;
 
-typedef struct 
+typedef struct task_ctrlblock
 {
-	uint16_t	task_period_obj;	//the period needed for every task i.e task x needs to be executed ever 10systicks or 25systicks...etc
-	int16_t		task_rem_time_obj;	//internal/non-user modified variable used for scheduling
-	void		(*tpf_cb_obj)(void);		//task pointer to function will be called
-	task_type_t task_type_obj;	//whether the task works forever or it's a one-time task
-	uint8_t		task_priority_obj;	//defines the task priority, the lower the priority value,the higher the task priority
-	task_stat_t task_state_obj;
-}task_ctrlblock_t;
+	uint16_t	task_period_obj;	  //the period needed for every task i.e task x needs to be executed ever 10systicks or 25systicks...etc
+	int16_t		task_rem_time_obj;	  //internal/non-user modified variable used for scheduling
+	void		(*tpf_cb_obj)(void);  //task pointer to function will be called
+	task_type_t task_type_obj;		  //whether the task works forever or it's a one-time task
+	uint8_t		task_priority_obj;	  //defines the task priority, the lower the priority value,the higher the task priority
+	task_stat_t task_state_obj;		  //defines the task state i.e, task currently running, task currently waiting
+	struct task_ctrlblock* ptcb_next_obj; //a pointer to (the next/the lower in priority) Task //V0.0.1
+	//uint16_t	task_starting_time_obj;	  //a value after-which the scheduler begins taking the task in calculations/begins scheduling the task //V0.0.1
+										  //>>i think it's not needed to be stored since it's used just once at the beginning so y not just add the wanted val
+										  //to the remaining_time variable and that's it.	//V0.0.1
+}task_ctrlblock_t; 
 
 task_ctrlblock_t tcb_test;
 tmu_err_t zerox86_tmu_init(timer_elect_t* timer_select,uint16_t systic_resolution);

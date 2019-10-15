@@ -9,8 +9,9 @@
 #include "timer_port.h"
 #include "ZeroX86.h"
 
-static task_ctrlblock_t * tmu_internal_tasks_buffer[MAX_TASKS_NO];
-
+static task_ctrlblock_t * tmu_internal_tasks_buffer[MAX_TASKS_NO+1];	//an array of pointers to task-control-blocks	//V0.0.1 the"+1"
+static uint16_t			  tmu_internal_tcbs_buffer_top=MAX_TASKS_NO;	//a variable will point to the first TCB  //V0.0.1
+static uint16_t           tmu_internal_tcbs_buffer_counter=0;			//a variable will have the current number of TCBs  //V0.0.1
 static void tmu_cbf(void);
 
 tmu_err_t zerox86_tmu_init(timer_elect_t timer_select,uint16_t systic_resolution)
@@ -33,27 +34,42 @@ static void tmu_cbf(void)
 		{
 			tmu_internal_tasks_buffer[iter]->task_rem_time_obj--;
 		}
-	}
+	} 
 }
-//release time/ starting point
-//arr of priorities
+//release time/ starting point	//starting time//V0.0.1
+//arr of priorities				//will use a"top holder" plus a ptr_next within each tcb_structure	//V0.0.1
 //sort before sys_begin
 //resort or circular array of structures
 
-tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void))
+//V0.0.1>>starting/release time
+tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,uint16_t starting_time,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void))
 {
 	cli();
 	if ((task_cb != NULL)&&((task_type == ONESHOOT_TASK)||(task_type == PERIODIC_TASK))&&(task_cbf != NULL))
 	{
 		if (tmu_internal_tasks_buffer[task_periority] == NULL)
 		{
-			tmu_internal_tasks_buffer[task_periority]=task_cb;								//store the task control block object in the internal tmu buffer
-			tmu_internal_tasks_buffer[task_periority]->task_period_obj=task_period;			//store the task period	//TODO:revise the need of dividing on the resolution
-			tmu_internal_tasks_buffer[task_periority]->task_rem_time_obj=task_period;		//set the remaining time to the task period as it's first added here
-			tmu_internal_tasks_buffer[task_periority]->task_type_obj=task_type;				//store the task type
-			tmu_internal_tasks_buffer[task_periority]->tpf_cb_obj=task_cbf;					//assign the task function to the internal buffer task pointer
-			tmu_internal_tasks_buffer[task_periority]->task_priority_obj=task_periority;	//store the task priority
+			tmu_internal_tasks_buffer[task_periority]=task_cb;										//store the task control block object in the internal tmu buffer
+			tmu_internal_tasks_buffer[task_periority]->task_period_obj=task_period;					//store the task period	//TODO:revise the need of dividing on the resolution
+			tmu_internal_tasks_buffer[task_periority]->task_rem_time_obj=task_period+starting_time;	//set the remaining time to the task period as it's first added here //V0.0.1>>plus the starting time
+			tmu_internal_tasks_buffer[task_periority]->task_type_obj=task_type;						//store the task type
+			tmu_internal_tasks_buffer[task_periority]->tpf_cb_obj=task_cbf;							//assign the task function to the internal buffer task pointer
+			tmu_internal_tasks_buffer[task_periority]->task_priority_obj=task_periority;			//store the task priority
 			tmu_internal_tasks_buffer[task_periority]->task_state_obj=TASK_ST_READY;
+			//do the tasks buffer linking //V0.0.1
+			if (tmu_internal_tcbs_buffer_top > task_periority)
+			{
+				tmu_internal_tasks_buffer[task_periority]->ptcb_next_obj=tmu_internal_tcbs_buffer_top;
+				tmu_internal_tcbs_buffer_top=task_periority;
+			}
+			else
+			{
+				uint8_t temp_search=task_periority-1;//temp_search var used to fined the higher-priority task to point to this new one
+				while (tmu_internal_tasks_buffer[temp_search]== NULL) {temp_search--;}	//found a higher prio-task
+				tmu_internal_tasks_buffer[task_periority]->ptcb_next_obj=tmu_internal_tasks_buffer[temp_search]->ptcb_next_obj;	//save the task lower than the current pointed to by the found high-prio-task
+				tmu_internal_tasks_buffer[temp_search]->ptcb_next_obj=task_periority;	//make it point to this new lower-prio task
+			}
+			tmu_internal_tcbs_buffer_counter++; //V0.0.1
 			sei();
 		}
 		else
@@ -77,6 +93,17 @@ tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb)
 	{
 		if (tmu_internal_tasks_buffer[task_cb->task_priority_obj] != NULL)
 		{
+			//do the tasks buffer linking //V0.0.1
+			if (tmu_internal_tcbs_buffer_top == tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_priority_obj)
+			{
+				tmu_internal_tcbs_buffer_top=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->ptcb_next_obj;
+			}
+			else
+			{
+				uint8_t temp_search=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_priority_obj-1; //temp_search var used to fined the higher-priority task that points to this being removed task
+				while (tmu_internal_tasks_buffer[temp_search]== NULL) {temp_search--;}	//found a higher prio-task
+				tmu_internal_tasks_buffer[temp_search]->ptcb_next_obj=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->ptcb_next_obj;	//make the higher-prio task point to this new lower-prio task
+			}
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]=NULL;								//store the task control block object in the internal tmu buffer
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_period_obj=0;				//store the task period	//TODO:revise the need of dividing on the resolution
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_rem_time_obj=0;				//set the remaining time to the task period as it's first added here
@@ -84,6 +111,8 @@ tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb)
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->tpf_cb_obj=NULL;					//assign the task function to the internal buffer task pointer
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_priority_obj=0;				//store the task priority
 			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_state_obj=TASK_ST_WAITING;	//
+			
+			tmu_internal_tcbs_buffer_counter--; //V0.0.1
 			sei();
 		}
 		else
@@ -188,74 +217,3 @@ void zerox86_tmu_dispatch(void)
 		iter++;
 	}
 }
-/*
-typedef enum ret_t{
-	no_error,
-	error_same_prio,
-	
-}ret_ms;
-/*
-typedef struct  
-{
-	task_prio;
-	ptr_stak;
-}tsk_tcb;
-/*
-tasks_t sys_arr[max]; 
-*/
-//init tmu timer @ 1 ms
-
-//tmu add task(task add, priority,timer/precedence 
-
-//tmu rem task(task add)
-
-//tmu pause task(priority,timer/precedence?)
-
-//tmu resume task(priority,timer/precedence?)
-
-//de-init tmu();
-
-/*
-no sound!!! :(
-*/
-/*
-int ZeroX86Init(void)
-{
-	/* Replace with your application code */
-	while (1)
-	{
-		zerox86_tmu_dispatch();
-	}
-}
-
-int main(void)
-{
-    /* Replace with your application code */
-  /**//*  while (1) 
-  /*  {
-		/*
-		dispatch();
-		_sleep();*/
- /*   }
-}
-/*
-dispatch()
-{
-	for(int i=0;i< ;i++)
-	{
-		if( ( tasks_arr[i] != NULL) && tasks_arr[i]->state  tasks_arr[i] % )
-			tasks_arr[i]();
-			i=0;
-	}
-			
-}
-
-sys_tick =1ms
-isr
-{
-	counter++;
-	
-}
-alooooo?
-?
-ana sam3*/
