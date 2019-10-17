@@ -8,33 +8,44 @@
 #include <avr/io.h>
 #include "timer_port.h"
 #include "ZeroX86.h"
+#include <util/delay.h>
 
-static task_ctrlblock_t * tmu_internal_tasks_buffer[MAX_TASKS_NO+1];	//an array of pointers to task-control-blocks	//V0.0.1 the"+1"
-static uint16_t			  tmu_internal_tcbs_buffer_top=MAX_TASKS_NO;	//a variable will point to the first TCB  //V0.0.1
-static uint16_t           tmu_internal_tcbs_buffer_counter=0;			//a variable will have the current number of TCBs  //V0.0.1
-static void tmu_cbf(void);
+
+volatile static task_ctrlblock_t * tmu_internal_tasks_buffer[MAX_TASKS_NO];	//an array of pointers to task-control-blocks	//V0.0.1 the"+1"
+volatile static uint16_t			  tmu_internal_tcbs_buffer_top=MAX_TASKS_NO;	//V0.0.1>>a variable will point to the first TCB 
+volatile static uint16_t           tmu_internal_tcbs_buffer_counter=0;			//a variable will have the current number of TCBs  //V0.0.1
+volatile static void tmu_cbf(void);
 
 tmu_err_t zerox86_tmu_init(timer_elect_t timer_select,uint16_t systic_resolution)
 {
+	//PORTA=0xff;/*_delay_ms(250);*/PORTA=0x00;/*_delay_ms(250);*/
 	//internal buffer initialization
-	uint8_t iter=0;
+	volatile uint8_t iter=0;
 	while (iter< MAX_TASKS_NO)
 	{
-		tmu_internal_tasks_buffer[iter]=NULL;
+		tmu_internal_tasks_buffer[iter++]=NULL;
 	}
 	systick_init(timer_select,systic_resolution,tmu_cbf);	//TODO:check exec result.
+	return TMU_ER_NO;
 }
 
 static void tmu_cbf(void)
 {
-	uint8_t iter=0;
+	volatile uint8_t iter=0;
 	while(iter < MAX_TASKS_NO)
 	{
 		if (tmu_internal_tasks_buffer[iter] != NULL)
 		{
 			tmu_internal_tasks_buffer[iter]->task_rem_time_obj--;
+			if(tmu_internal_tasks_buffer[iter]->task_rem_time_obj <= 0)	//V0.0.2>>needs to reset the task state back to the ready state
+			{
+				tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_READY;	//V0.0.2
+			}
 		}
+		iter++;
+		
 	} 
+		//PORTD++;
 }
 //release time/ starting point	//starting time//V0.0.1
 //arr of priorities				//will use a"top holder" plus a ptr_next within each tcb_structure	//V0.0.1
@@ -100,7 +111,7 @@ tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb)
 			}
 			else
 			{
-				uint8_t temp_search=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_priority_obj-1; //temp_search var used to fined the higher-priority task that points to this being removed task
+				volatile uint8_t temp_search=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_priority_obj-1; //temp_search var used to fined the higher-priority task that points to this being removed task
 				while (tmu_internal_tasks_buffer[temp_search]== NULL) {temp_search--;}	//found a higher prio-task
 				tmu_internal_tasks_buffer[temp_search]->ptcb_next_obj=tmu_internal_tasks_buffer[task_cb->task_priority_obj]->ptcb_next_obj;	//make the higher-prio task point to this new lower-prio task
 			}
@@ -128,7 +139,6 @@ tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb)
 	}
 	return TMU_ER_NO;
 }
-
 tmu_err_t zerox86_tmu_pause_task(task_ctrlblock_t* task_cb)
 {
 	cli();
@@ -180,18 +190,21 @@ tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb)
 tmu_err_t zerox86_tmu_deinit(timer_elect_t timer_select)
 {
 	//internal buffer initialization
-	uint8_t iter=0;
+	volatile uint8_t iter=0;
 	while (iter< MAX_TASKS_NO)
 	{
-		tmu_internal_tasks_buffer[iter]=NULL;
+		tmu_internal_tasks_buffer[iter++]=NULL;
+		//zero variables
 	}
 	systick_deinit(timer_select);	//TODO:check exec result.
+	return TMU_ER_NO;
 }
 
 void zerox86_tmu_dispatch(void)
 {
-	uint8_t iter=0;
-	while (iter < MAX_TASKS_NO)
+	volatile uint8_t iter=tmu_internal_tcbs_buffer_top;	//V0.0.1 >>setting iter to the first available and highest-prio task
+	volatile uint8_t tasks_executed_counter=0;
+	while( (iter <= MAX_TASKS_NO) && (tasks_executed_counter <= tmu_internal_tcbs_buffer_counter) )	//V0.0.1 >>to be checked if < or <=
 	{
 		if (tmu_internal_tasks_buffer[iter] != NULL)
 		{
@@ -202,8 +215,9 @@ void zerox86_tmu_dispatch(void)
 					tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_RUNNING;
 					(*tmu_internal_tasks_buffer[iter]->tpf_cb_obj)();
 					tmu_internal_tasks_buffer[iter]->task_rem_time_obj=tmu_internal_tasks_buffer[iter]->task_period_obj;
-					tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_WAITING;
-					iter=0;	//to make the highest priority task to run next TODO:think about it
+					tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_WAITING;//V0.0.2 this is used to make the current running task waiting to achieve a goal that's
+																					//V0.0.2 the highest priority task ready will run next at max since this is non-preemptive
+																					//V0.0.2 by going back to check if any higher priority task is ready as mentioned in line230
 				}
 				else
 				{	//one-shoot>>remove after finishing it
@@ -212,8 +226,15 @@ void zerox86_tmu_dispatch(void)
 					zerox86_tmu_rem_task(tmu_internal_tasks_buffer[iter]);
 					
 				}
+				tasks_executed_counter++;			//V0.0.1>>a task had just been executed successfully,increment.
+				iter=tmu_internal_tcbs_buffer_top;	//V0.0.1>>to make the highest priority task to run next TODO:think about it //V0.0.1 iter = top not 0
+													//V0.0.1>>corrected a mistake>> resetting the iter to the first task at the two cases when it's one-shoot and periodic //V0.0.1
 			}
+			iter=tmu_internal_tasks_buffer[iter]->ptcb_next_obj;	//V0.0.1 >>the iter to be incremented it needs to be pointing to a tcb not a NULL
 		}
-		iter++;
+		else
+		{	//V0.0.1>> if it's null, the iterator is incremented undependable on the pointer and not accessing a null
+			iter++;
+		}
 	}
 }

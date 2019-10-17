@@ -4,6 +4,8 @@
 
 avr_timer.c
 
+main.c
+
 timer_port.c
 
 ZeroX86.c

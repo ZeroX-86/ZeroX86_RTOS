@@ -5,7 +5,7 @@
  *  Author: Mahmo
  */ 
 
-
+#if 0
 #ifndef AVR_TIMER_H_
 #define AVR_TIMER_H_
 #include <avr/io.h>
@@ -59,3 +59,4 @@ timer_err_t update_comp_timer(timer_object *given_obj,uint16_t *val);
 timer_err_t deinit_timer(timer_object *given_obj);
 
 #endif /* AVR_TIMER_H_ */
+#endif //0

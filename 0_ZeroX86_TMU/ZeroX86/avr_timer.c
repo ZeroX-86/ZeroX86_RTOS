@@ -4,6 +4,7 @@
  * Created: 10/8/2019 6:46:06 AM
  *  Author: Mahmoud
  */ 
+#if 0
 #include "avr_timer.h"
 
 #define WGMn1			2	//for timer 0 and 2
@@ -131,3 +132,4 @@ timer_err_t deinit_timer(timer_object *given_obj)
 	}
 	return TMR_INV_PARAMS;
 }
+#endif //0

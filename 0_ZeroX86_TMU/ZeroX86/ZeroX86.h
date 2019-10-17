@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include "ZeroX86_cfg.h"
 
-#define MAX_TASKS_NO 25
+#define MAX_TASKS_NO 5
 #define MEANINGLESS_VAL 5	//it's used as the resolution but it's not implemented yet :(
 
 typedef enum
@@ -36,7 +36,7 @@ typedef enum
 	TASK_ST_WAITING,	
 }task_stat_t;
 
-typedef struct task_ctrlblock
+typedef struct 
 {
 	uint16_t	task_period_obj;	  //the period needed for every task i.e task x needs to be executed ever 10systicks or 25systicks...etc
 	int16_t		task_rem_time_obj;	  //internal/non-user modified variable used for scheduling
@@ -44,15 +44,14 @@ typedef struct task_ctrlblock
 	task_type_t task_type_obj;		  //whether the task works forever or it's a one-time task
 	uint8_t		task_priority_obj;	  //defines the task priority, the lower the priority value,the higher the task priority
 	task_stat_t task_state_obj;		  //defines the task state i.e, task currently running, task currently waiting
-	struct task_ctrlblock* ptcb_next_obj; //a pointer to (the next/the lower in priority) Task //V0.0.1
+	uint16_t    ptcb_next_obj;		  //a pointer to (the next/the lower in priority) Task //V0.0.1
 	//uint16_t	task_starting_time_obj;	  //a value after-which the scheduler begins taking the task in calculations/begins scheduling the task //V0.0.1
 										  //>>i think it's not needed to be stored since it's used just once at the beginning so y not just add the wanted val
 										  //to the remaining_time variable and that's it.	//V0.0.1
 }task_ctrlblock_t; 
 
-task_ctrlblock_t tcb_test;
-tmu_err_t zerox86_tmu_init(timer_elect_t* timer_select,uint16_t systic_resolution);
-tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void));
+tmu_err_t zerox86_tmu_init(timer_elect_t timer_select,uint16_t systic_resolution);
+tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,uint16_t starting_time,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void));
 tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb);
 tmu_err_t zerox86_tmu_pause_task(task_ctrlblock_t* task_cb);
 tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb);
