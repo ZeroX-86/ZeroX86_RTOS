@@ -8,7 +8,7 @@
 #include <avr/io.h>
 #include "timer_port.h"
 #include "ZeroX86.h"
-#include <util/delay.h>
+//#include <util/delay.h>
 
 
 volatile static task_ctrlblock_t * tmu_internal_tasks_buffer[MAX_TASKS_NO];	//an array of pointers to task-control-blocks	//V0.0.1 the"+1"
@@ -34,7 +34,7 @@ static void tmu_cbf(void)
 	volatile uint8_t iter=0;
 	while(iter < MAX_TASKS_NO)
 	{
-		if (tmu_internal_tasks_buffer[iter] != NULL)
+		if ((tmu_internal_tasks_buffer[iter] != NULL) && (tmu_internal_tasks_buffer[iter]->task_paused_obj == false) )	//V0.0.3>>if remaining time is 3 and sent to PAUSE state,it wont be scheduled and once it's sent back to RESUME state, the remaining is the same before being paused
 		{
 			tmu_internal_tasks_buffer[iter]->task_rem_time_obj--;
 			if(tmu_internal_tasks_buffer[iter]->task_rem_time_obj <= 0)	//V0.0.2>>needs to reset the task state back to the ready state
@@ -43,7 +43,6 @@ static void tmu_cbf(void)
 			}
 		}
 		iter++;
-		
 	} 
 		//PORTD++;
 }
@@ -146,7 +145,7 @@ tmu_err_t zerox86_tmu_pause_task(task_ctrlblock_t* task_cb)
 	{
 		if (tmu_internal_tasks_buffer[task_cb->task_priority_obj] != NULL)
 		{
-			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_state_obj=TASK_ST_WAITING;	//set the task state to the waiting state
+			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_paused_obj=true;	//V0.0.3>> setting the paused var true so even the time had come, the task wont be executed
 			sei();
 		}
 		else
@@ -170,7 +169,7 @@ tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb)
 	{
 		if (tmu_internal_tasks_buffer[task_cb->task_priority_obj] != NULL)
 		{
-			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_state_obj=TASK_ST_READY;	//set the task state back to the ready state
+			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_paused_obj=false;	//V0.0.3>> setting the paused var false so the task is back to normal nd been scheduled
 			sei();
 		}
 		else
@@ -186,7 +185,54 @@ tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb)
 	}
 	return TMU_ER_NO;
 }
-
+//V0.0.4>> achieving the task delay functionality
+tmu_err_t zerox86_tmu_delay_task(task_ctrlblock_t* task_cb,uint16_t numb_of_ticks)
+{
+	cli();
+	if (task_cb != NULL)
+	{
+		if (tmu_internal_tasks_buffer[task_cb->task_priority_obj] != NULL)
+		{
+			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_rem_time_obj+=numb_of_ticks;	//V0.0.4>> achieving a task delay functionality by adding the required no of ticks delay to the remaining time variable
+			sei();
+		}
+		else
+		{
+			sei();
+			return TMU_ER_TASK_ALREADY_REMOVED;
+		}
+	}
+	else
+	{
+		sei();
+		return TMU_ER_INV_PARAMS;
+	}
+	return TMU_ER_NO;
+}
+//V0.0.4>> achieving the task delay functionality
+tmu_err_t zerox86_tmu_delay_hmsm_task(task_ctrlblock_t* task_cb,uint8_t hours,uint8_t minutes,uint8_t seconds,uint16_t milli)
+{
+	cli();
+	if (task_cb != NULL)
+	{
+		if (tmu_internal_tasks_buffer[task_cb->task_priority_obj] != NULL)
+		{
+			tmu_internal_tasks_buffer[task_cb->task_priority_obj]->task_rem_time_obj+=(((uint32_t)60*60*1000*hours)+((uint32_t)60*1000*minutes)+((uint32_t)1000*seconds)+milli);	//V0.0.4>> achieving a task delay functionality by adding the required delay val to the remaining time variable
+			sei();
+		}
+		else
+		{
+			sei();
+			return TMU_ER_TASK_ALREADY_REMOVED;
+		}
+	}
+	else
+	{
+		sei();
+		return TMU_ER_INV_PARAMS;
+	}
+	return TMU_ER_NO;
+}
 tmu_err_t zerox86_tmu_deinit(timer_elect_t timer_select)
 {
 	//internal buffer initialization
@@ -208,13 +254,15 @@ void zerox86_tmu_dispatch(void)
 	{
 		if (tmu_internal_tasks_buffer[iter] != NULL)
 		{
-			if ( (tmu_internal_tasks_buffer[iter]->task_rem_time_obj <= 0) && (tmu_internal_tasks_buffer[iter]->task_state_obj == TASK_ST_READY) )
+			if ( (tmu_internal_tasks_buffer[iter]->task_rem_time_obj <= 0) && 
+			     (tmu_internal_tasks_buffer[iter]->task_state_obj == TASK_ST_READY) && 
+				 (tmu_internal_tasks_buffer[iter]->task_paused_obj == false) )	//V0.0.3>> the variable added to achieve the PAUSE/RESUME functionalities
 			{
 				if(tmu_internal_tasks_buffer[iter]->task_type_obj == PERIODIC_TASK)
 				{
 					tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_RUNNING;
 					(*tmu_internal_tasks_buffer[iter]->tpf_cb_obj)();
-					tmu_internal_tasks_buffer[iter]->task_rem_time_obj=tmu_internal_tasks_buffer[iter]->task_period_obj;
+					tmu_internal_tasks_buffer[iter]->task_rem_time_obj+=tmu_internal_tasks_buffer[iter]->task_period_obj;	//V0.0.4 >>changed to += not to corrupt the delay functionaity
 					tmu_internal_tasks_buffer[iter]->task_state_obj=TASK_ST_WAITING;//V0.0.2 this is used to make the current running task waiting to achieve a goal that's
 																					//V0.0.2 the highest priority task ready will run next at max since this is non-preemptive
 																					//V0.0.2 by going back to check if any higher priority task is ready as mentioned in line230

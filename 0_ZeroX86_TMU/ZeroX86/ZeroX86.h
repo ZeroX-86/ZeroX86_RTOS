@@ -9,8 +9,9 @@
 #ifndef ZEROX86_H_
 #define ZEROX86_H_
 
-#include "timer_port.h"
 #include <stdint.h>
+#include <stdbool.h>
+#include "timer_port.h"
 #include "ZeroX86_cfg.h"
 
 #define MAX_TASKS_NO 5
@@ -39,12 +40,13 @@ typedef enum
 typedef struct 
 {
 	uint16_t	task_period_obj;	  //the period needed for every task i.e task x needs to be executed ever 10systicks or 25systicks...etc
-	int16_t		task_rem_time_obj;	  //internal/non-user modified variable used for scheduling
+	int32_t		task_rem_time_obj;	  //internal/non-user modified variable used for scheduling		//V0.0.4>>extended to 32-bit var to handle large values and delays
 	void		(*tpf_cb_obj)(void);  //task pointer to function will be called
 	task_type_t task_type_obj;		  //whether the task works forever or it's a one-time task
 	uint8_t		task_priority_obj;	  //defines the task priority, the lower the priority value,the higher the task priority
 	task_stat_t task_state_obj;		  //defines the task state i.e, task currently running, task currently waiting
 	uint16_t    ptcb_next_obj;		  //a pointer to (the next/the lower in priority) Task //V0.0.1
+	bool	    task_paused_obj;	  //V0.0.3>> added to achieve the Pause/Resume functionalities 
 	//uint16_t	task_starting_time_obj;	  //a value after-which the scheduler begins taking the task in calculations/begins scheduling the task //V0.0.1
 										  //>>i think it's not needed to be stored since it's used just once at the beginning so y not just add the wanted val
 										  //to the remaining_time variable and that's it.	//V0.0.1
@@ -55,6 +57,9 @@ tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,ui
 tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb);
 tmu_err_t zerox86_tmu_pause_task(task_ctrlblock_t* task_cb);
 tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb);
+//V0.0.4>> achieving the task delay functionality
+tmu_err_t zerox86_tmu_delay_task(task_ctrlblock_t* task_cb,uint16_t numb_of_ticks);
+tmu_err_t zerox86_tmu_delay_hmsm_task(task_ctrlblock_t* task_cb,uint8_t hours,uint8_t minutes,uint8_t seconds,uint16_t milli);
 tmu_err_t zerox86_tmu_deinit(timer_elect_t timer_select);
 void	  zerox86_tmu_dispatch(void);
 #endif /* ZEROX86_H_ */
