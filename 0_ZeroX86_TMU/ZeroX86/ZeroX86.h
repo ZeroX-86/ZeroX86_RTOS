@@ -14,8 +14,6 @@
 #include "timer_port.h"
 #include "ZeroX86_cfg.h"
 
-#define MAX_TASKS_NO 5
-#define MEANINGLESS_VAL 5	//it's used as the resolution but it's not implemented yet :(
 
 typedef enum
 {
@@ -25,11 +23,11 @@ typedef enum
 
 typedef enum
 {
-	TMU_ER_NO,
-	TMU_ER_INV_PARAMS,
-	TMU_ER_PRIO_NOT_AVAILABLE,
-	TMU_ER_TASK_ALREADY_REMOVED,
-}tmu_err_t;
+	ZEROX86_ER_NO,
+	ZEROX86_ER_INV_PARAMS,
+	ZEROX86_ER_PRIO_NOT_AVAILABLE,
+	ZEROX86_ER_TASK_ALREADY_REMOVED,
+}ZeroX86_err_t;
 typedef enum
 {
 	TASK_ST_RUNNING,
@@ -52,14 +50,14 @@ typedef struct
 										  //to the remaining_time variable and that's it.	//V0.0.1
 }task_ctrlblock_t; 
 
-tmu_err_t zerox86_tmu_init(timer_elect_t timer_select,uint16_t systic_resolution);
-tmu_err_t zerox86_tmu_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,uint16_t starting_time,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void));
-tmu_err_t zerox86_tmu_rem_task(task_ctrlblock_t* task_cb);
-tmu_err_t zerox86_tmu_pause_task(task_ctrlblock_t* task_cb);
-tmu_err_t zerox86_tmu_resume_task(task_ctrlblock_t* task_cb);
+ZeroX86_err_t ZeroX86_init(timer_elect_t timer_select,uint16_t systic_resolution);
+ZeroX86_err_t ZeroX86_add_task(task_ctrlblock_t* task_cb,uint16_t task_period,uint16_t starting_time,task_type_t task_type,uint8_t task_periority,void(*task_cbf)(void));
+ZeroX86_err_t ZeroX86_rem_task(task_ctrlblock_t* task_cb);
+ZeroX86_err_t ZeroX86_pause_task(task_ctrlblock_t* task_cb);
+ZeroX86_err_t ZeroX86_resume_task(task_ctrlblock_t* task_cb);
 //V0.0.4>> achieving the task delay functionality
-tmu_err_t zerox86_tmu_delay_task(task_ctrlblock_t* task_cb,uint16_t numb_of_ticks);
-tmu_err_t zerox86_tmu_delay_hmsm_task(task_ctrlblock_t* task_cb,uint8_t hours,uint8_t minutes,uint8_t seconds,uint16_t milli);
-tmu_err_t zerox86_tmu_deinit(timer_elect_t timer_select);
-void	  zerox86_tmu_dispatch(void);
+ZeroX86_err_t ZeroX86_delay_task(task_ctrlblock_t* task_cb,uint16_t numb_of_ticks);
+ZeroX86_err_t ZeroX86_delay_hmsm_task(task_ctrlblock_t* task_cb,uint8_t hours,uint8_t minutes,uint8_t seconds,uint16_t milli);
+ZeroX86_err_t ZeroX86_deinit(timer_elect_t timer_select);
+void		  ZeroX86_dispatch(void);
 #endif /* ZEROX86_H_ */
