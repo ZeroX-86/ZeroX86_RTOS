@@ -1,0 +1,29 @@
+RTOS_NOTES
+**********
+NON_PREEMPTIVE KERNEL
+*********************
+-dispatch has it's own infinite loop
+-Kernel functions using tasks IDs or Priorities
+-Write Device drivers for the OS
+-GUI LIb
+-Enable Using the ttf file system
+-memory management
+
+
+UCOSII-UCOSII-UCOSII-UCOSII-UCOSII-UCOSII-UCOSII
+---------TcbInit
+if method == 3>>create the cpu_sr
+create a pointer to a tcb to be filled in
+enter critical
+	get a free tcb from the FreeTCBList
+exit critical
+store the given data into this TCB
+if createExtended>>store the extra data
+if task deletion enabled>>init it
+calculate the task X&Y Indexes to save time
+if task events will be used>>init it
+if task flags enabled>>init it
+if version >= 204 >>call the TCB init hook function
+call the task create hook function
+put the task tcb in the Kernel table to be processed
+---------TcbInit
