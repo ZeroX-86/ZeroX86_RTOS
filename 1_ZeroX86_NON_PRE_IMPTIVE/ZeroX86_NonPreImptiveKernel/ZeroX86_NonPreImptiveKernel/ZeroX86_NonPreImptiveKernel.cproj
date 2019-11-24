@@ -118,7 +118,43 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="cycbuff.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cycbuff.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mailbox.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mailbox.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mballoc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mballoc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="queue.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="queue.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="semaphore.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="semaphore.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="usmartx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="usmartx.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
