@@ -43,10 +43,18 @@ typedef struct ControlBlock
 	Void(*TaskCB)(Void *PVArg);
 	UINT8 TaskName[MAX_TASK_NAME_LENGTH];
 }TaskControlBlock;
+//priorities are evaluated according to the prio val+the ID val?? or the priority + fifo
 
+//prios or tcb structures>> a linked list/array of queues with each element have a ptr
+// to the tasks and a ptr to the next ready prio level
+//taskprioritySet
 #define CREATE_TASK(HANDLE, PRIORITY, ID, TASKCB, NAME) TaskEnteryT HANDLE={.TaskPriority=PRIORITY,.TaskId=ID,.TaskCB=TASKCB,.TaskName=NAME};
 
 
 
 
 #endif /* ZEROX86_H_ */
+/*
+MA112: Discrete Mathematics I: logic, basics, and foundationshttps://www.youtube.com/playlist?list=PLoK2Lr1miEm_WKBBBHUQJRXaumduqkM4S
+Mathematics for Computer Sciencehttps://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-042j-mathematics-for-computer-science-fall-2010/index.htm
+MIT 18.01 Single Variable Calculus, Fall 2006https://www.youtube.com/playlist?list=PL590CCC2BC5AF3BC1*/
