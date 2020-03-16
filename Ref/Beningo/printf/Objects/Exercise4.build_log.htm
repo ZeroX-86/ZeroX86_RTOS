@@ -1,0 +1,96 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.17.0.0
+Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Jacob Beningo, Beningo Engineering, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.17
+Toolchain Path:  D:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 1 (build 61)
+Assembler:       Armasm.exe V5.06 update 1 (build 61)
+Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
+Library Manager: ArmAr.exe V5.06 update 1 (build 61)
+Hex Converter:   FromElf.exe V5.06 update 1 (build 61)
+CPU DLL:         SARMCM3.DLL V5.17
+Dialog DLL:      DARMCM1.DLL V1.12.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
+Dialog DLL:      TARMCM1.DLL V1.9.0.0
+ 
+<h2>Project:</h2>
+D:\Dropbox\Beningo-Engineering\Publications\Blogs\EDN\2016\26-files\printf\printf.uvprojx
+Project File Date:  08/21/2015
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'Target 1'
+compiling tsk_10ms.c...
+compiling tsk.c...
+compiling tsk_cfg.c...
+compiling uart_config.c...
+compiling tsk_100ms.c...
+assembling startup_stm32l053xx.s...
+compiling wdt_config.c...
+compiling system_stm32l0xx.c...
+compiling uart.c...
+compiling main.c...
+main.c(62): warning:  #1293-D: assignment in condition
+  while (*to++ = *from++)
+main.c: 1 warning, 0 errors
+compiling button.c...
+compiling wdt.c...
+compiling LED_STM32L053-Discovery.c...
+compiling SysTick.c...
+compiling uart_app.c...
+linking...
+Program Size: Code=5500 RO-data=248 RW-data=96 ZI-data=1544  
+FromELF: creating hex file...
+".\Objects\Exercise4.axf" - 0 Error(s), 1 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 4.3.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.MDK-Middleware.7.0.0-beta.pack
+                ::Board Support:LED:1.00 (API)
+                Keil MDK-ARM Professional Middleware for ARM Cortex-M based devices
+   * Component: LED Version: 1.00
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32L0xx_DFP.1.3.0.pack
+                Keil.STM32L053-Discovery::Board Support:LED:1.0.0
+                STMicroelectronics STM32L0 Series Device Support and Examples
+   * Component: LED Version: 1.0.0
+   * Component: Startup Version: 1.0.0
+
+<h2>Collection of Component include folders:</h2>
+  D:\Dropbox\Beningo-Engineering\Publications\Blogs\EDN\2016\26-files\printf\RTE
+  D:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.0.0-beta\Board
+  D:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:4.3.0
+
+   * Component: ::Board Support:LED:1.00 (API)
+      Include file:  Board\Board_LED.h
+
+   * Component: Keil.STM32L053-Discovery::Board Support:LED:1.0.0
+      Source file:   Boards\ST\STM32L053-Discovery\Common\LED_STM32L053-Discovery.c
+
+   * Component: Keil::Device:Startup:1.0.0
+      Source file:   Device\Source\ARM\startup_stm32l053xx.s
+      Source file:   Device\Source\system_stm32l0xx.c
+Build Time Elapsed:  00:00:03
+</pre>
+</body>
+</html>

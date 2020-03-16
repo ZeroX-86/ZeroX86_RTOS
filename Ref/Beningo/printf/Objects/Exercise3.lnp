@@ -1,0 +1,15 @@
+--cpu Cortex-M0+
+".\objects\main.o"
+".\objects\systick.o"
+".\objects\tsk.o"
+".\objects\tsk_10ms.o"
+".\objects\tsk_100ms.o"
+".\objects\tsk_cfg.o"
+".\objects\button.o"
+".\objects\led_stm32l053-discovery.o"
+".\objects\startup_stm32l053xx.o"
+".\objects\system_stm32l0xx.o"
+--library_type=microlib --strict --scatter ".\CustomLinker.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\Exercise3.map" -o .\Objects\Exercise3.axf

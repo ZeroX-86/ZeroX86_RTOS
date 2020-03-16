@@ -4,7 +4,7 @@
  *  Date	: Nov 29, 2019
  *  Author  : MahmoudSaad.ZeroX-86
  *  Email   : Mahmoud.S.AbdElhares@gmail.com
- *  Github  : github.com/zerox-86
+ *  Github  : github.com/zerox96
  *  LinkedIn: www.linkedin.com/in/mahmoudsaad96
  *  FaceBook: www.facebook.com/ZeroX86.MSA
  */
@@ -12,46 +12,83 @@
 
 #ifndef ZEROX86_H_
 #define ZEROX86_H_
+#include "ZeroXPort.h"
+#include <stdlib.h>
+typedef          void	OS_VoidT;
+typedef signed   char	OS_Int8T ;
+typedef unsigned char	OS_Uint8T ;
+typedef signed   short	OS_Int16T ;
+typedef unsigned short	OS_Uint16T ;
+typedef	signed	 long	OS_Int32T ;
+typedef unsigned long	OS_Uint32T;
 
-typedef void			Void;
-typedef signed char		INT8 ;
-typedef unsigned char	UINT8 ;
-typedef signed short	INT16 ;
-typedef unsigned short	UINT16 ;
-typedef	signed long		INT32 ;
-typedef unsigned long	UINT32;
-#define MAX_TASK_NAME_LENGTH 20
+#define OS_NULL ((void*)0)
 
-#ifndef NULL
-#define NULL ((void*)0)
-#endif
+#define TASK_WAITING	0U
+#define TASK_READY		1U
+#define TASK_SUSPENDED	2U
 
-typedef struct  
+#define MAX_TASK_NAME_LENGTH 5U
+
+#define USE_IDLE_HOOK 1U
+
+//used to handle the task implementation
+typedef OS_VoidT(*OS_CodeHandlerT)(OS_VoidT *PVArg);
+//used to handle the task tcb
+typedef OS_VoidT* OS_TaskHandlerT;
+
+typedef struct ctrlBlock
 {
-	UINT8 Priority;
-	UINT8 Id;
-	Void(*TaskCB)(Void *PVArg);
-	UINT8 Name[MAX_TASK_NAME_LENGTH];
-}TaskEnteryT;
+	struct ctrlBlock*	PtrNext;	//pointer to the next task
+	struct ctrlBlock*	PtrPrev;	//pointer to the prev task
+	OS_Uint8T			TaskPriority;	//task priority
+	OS_Uint8T			TaskId;	//task id
+	OS_Uint8T			TaskState;	//task state
+	OS_VoidT*			TaskArg;
+	OS_Uint32T			TaskPeriod;	//??
+	OS_Uint32T			TaskTimeOut;	//timeout delay down-counter
+	OS_CodeHandlerT     TaskHandler;	//pointer to a task handler
+	OS_Uint8T			TaskName[MAX_TASK_NAME_LENGTH];	//task name
+	OS_Uint32T			TaskExecTime;	//variable to store the task exec time if enabled
+}OS_Tcb;
 
-typedef struct ControlBlock
+typedef struct
 {
-	struct ControlBlock* PtrNext;
-	struct ControlBlock* PtrPrev;
-	UINT8 TaskPriority;
-	UINT8 TaskId;
-	Void(*TaskCB)(Void *PVArg);
-	UINT8 TaskName[MAX_TASK_NAME_LENGTH];
-}TaskControlBlock;
+	OS_Tcb*		PtrListHead;	//the highest-priority task
+	OS_Tcb*		PtrCurrTask;	//the currently active task
+	OS_Uint8T	U8ListSize;		//the no of tasks in the sys
+}OS_TcbListT;
+
+typedef enum {
+	OS_ERR_NO,
+	OS_ERR_INV_PARAMS,
+	OS_ERR_LIST_EMPTY,
+	OS_ERR_LIST_NOT_FOUND,
+	OS_ERR_CNT_MALLOC,
+	OS_ERR_LIST_X,	//when having any error with the list operations
+		
+}OS_ReturnT;
+
+
 //priorities are evaluated according to the prio val+the ID val?? or the priority + fifo
 
 //prios or tcb structures>> a linked list/array of queues with each element have a ptr
 // to the tasks and a ptr to the next ready prio level
 //taskprioritySet
-#define CREATE_TASK(HANDLE, PRIORITY, ID, TASKCB, NAME) TaskEnteryT HANDLE={.TaskPriority=PRIORITY,.TaskId=ID,.TaskCB=TASKCB,.TaskName=NAME};
+//#define CREATE_TASK(HANDLE, PRIORITY, ID, TASKCB, NAME) TaskEnteryT HANDLE={.TaskPriority=PRIORITY,.TaskId=ID,.TaskCB=TASKCB,.TaskName=NAME};
 
 
-
+OS_ReturnT OS_SysInit();
+OS_ReturnT OS_CreateTask(OS_TaskHandlerT* TaskHandler,
+					     OS_CodeHandlerT CodeHandler,
+					   	 OS_Uint32T Period,OS_Uint8T Id,
+					     OS_Uint32T StartTime,OS_Uint8T* Name,
+					     OS_Uint8T Priority);
+OS_ReturnT OS_SysRun(OS_VoidT);
+OS_ReturnT OS_ResumeTask(OS_TaskHandlerT* Handler);
+OS_ReturnT OS_RemoveTask(OS_TaskHandlerT* TaskHandler);
+OS_ReturnT OS_DelayTask(OS_TaskHandlerT* Handler,OS_Uint32T Ticks);
+OS_ReturnT OS_SuspendTask(OS_TaskHandlerT* Handler);
 
 #endif /* ZEROX86_H_ */
 /*

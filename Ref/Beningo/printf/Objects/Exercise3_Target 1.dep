@@ -1,0 +1,65 @@
+Dependencies for Project 'Exercise3', Target 'Target 1': (DO NOT MODIFY !)
+F (.\main.c)(0x55425E22)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l053xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm0plus.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\system_stm32l0xx.h)(0x53501472)
+I (SysTick.h)(0x553AEAEA)
+I (tsk_cfg.h)(0x532D8800)
+I (scheduler.h)(0x540D16FD)
+I (button.h)(0x55425E37)
+I (board_led.h)(0x55312E7D)
+F (.\SysTick.c)(0x55425E11)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\systick.o --omf_browse .\objects\systick.crf --depend .\objects\systick.d)
+I (SysTick.h)(0x553AEAEA)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l053xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm0plus.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\system_stm32l0xx.h)(0x53501472)
+F (.\tsk.c)(0x553AEAC0)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\tsk.o --omf_browse .\objects\tsk.crf --depend .\objects\tsk.d)
+I (tsk.h)(0x532D8800)
+F (.\tsk_10ms.c)(0x55426343)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\tsk_10ms.o --omf_browse .\objects\tsk_10ms.crf --depend .\objects\tsk_10ms.d)
+I (tsk_10ms.h)(0x532D8800)
+I (button.h)(0x55425E37)
+F (.\tsk_100ms.c)(0x55426453)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\tsk_100ms.o --omf_browse .\objects\tsk_100ms.crf --depend .\objects\tsk_100ms.d)
+I (tsk_100ms.h)(0x532D8800)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (board_led.h)(0x55312E7D)
+I (button.h)(0x55425E37)
+F (.\tsk_cfg.c)(0x540D1663)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\tsk_cfg.o --omf_browse .\objects\tsk_cfg.crf --depend .\objects\tsk_cfg.d)
+I (tsk.h)(0x532D8800)
+I (tsk_10ms.h)(0x532D8800)
+I (tsk_100ms.h)(0x532D8800)
+I (scheduler.h)(0x540D16FD)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+F (.\button.c)(0x55426586)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\button.o --omf_browse .\objects\button.crf --depend .\objects\button.d)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (button.h)(0x55425E37)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l053xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm0plus.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\system_stm32l0xx.h)(0x53501472)
+F (.\SysTick.h)(0x553AEAEA)()
+F (.\button.h)(0x55425E37)()
+F (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Boards\ST\STM32L053-Discovery\Common\LED_STM32L053-Discovery.c)(0x54E4ECC4)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\led_stm32l053-discovery.o --omf_browse .\objects\led_stm32l053-discovery.crf --depend .\objects\led_stm32l053-discovery.d)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l0xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l053xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm0plus.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\system_stm32l0xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board\Board_LED.h)(0x53BBCB12)
+F (RTE\Device\STM32L053R8\startup_stm32l053xx.s)(0x53501472)(--cpu Cortex-M0+ --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include--pd "__UVISION_VERSION SETA 514" --pd "_RTE_ SETA 1" --pd "STM32L053xx SETA 1"--list .\listings\startup_stm32l053xx.lst --xref -o .\objects\startup_stm32l053xx.o --depend .\objects\startup_stm32l053xx.d)
+F (RTE\Device\STM32L053R8\system_stm32l0xx.c)(0x53501472)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections-I C:\CEC_Exercises\Exercise3\RTE-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I E:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\6.3.0\Board-I E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="514" -D_RTE_ -DSTM32L053xx-o .\objects\system_stm32l0xx.o --omf_browse .\objects\system_stm32l0xx.crf --depend .\objects\system_stm32l0xx.d)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l0xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\stm32l053xx.h)(0x53501472)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm0plus.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5476A9D0)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
+I (E:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.3.0\Device\Include\system_stm32l0xx.h)(0x53501472)
