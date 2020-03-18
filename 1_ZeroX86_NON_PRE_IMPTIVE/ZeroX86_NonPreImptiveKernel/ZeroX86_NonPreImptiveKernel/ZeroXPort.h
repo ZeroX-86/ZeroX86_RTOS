@@ -38,8 +38,8 @@ typedef enum
 	TIMER_0=0x53,
 	TIMER_1=0x4e,
 	TIMER_2=0x45,
-}timer_elect_t;
+}timer_select_t;
 
-port_err_t systick_init(timer_elect_t systick_timer,int16_t systick_resolution,void(*timer_interrupt_cbf)(void));
-port_err_t systick_deinit(timer_elect_t systick_timer);
+port_err_t systick_init(timer_select_t systick_timer,int16_t systick_resolution,void(*timer_interrupt_cbf)(void));
+port_err_t systick_deinit(timer_select_t systick_timer);
 #endif /* AVRPORT_H_ */

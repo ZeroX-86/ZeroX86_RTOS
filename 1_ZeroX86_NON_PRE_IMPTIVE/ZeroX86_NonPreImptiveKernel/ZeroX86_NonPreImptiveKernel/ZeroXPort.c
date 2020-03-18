@@ -11,7 +11,7 @@
  #include "ZeroXPort.h"
 void(*timer_ctc_cbf)(void)=NULL;
 
-port_err_t systick_init(timer_elect_t systick_timer,int16_t systick_resolution,void(*timer_interrupt_cbf)(void))
+port_err_t systick_init(timer_select_t systick_timer,int16_t systick_resolution,void(*timer_interrupt_cbf)(void))
 {
 	#ifdef AVR_AT32
 	#warning "NOTICE CURRENTLY I SUPPORT ONLY A SYSTICK OF 1mS"
@@ -178,7 +178,7 @@ port_err_t systick_init(timer_elect_t systick_timer,int16_t systick_resolution,v
 	return PRT_NO_ER;
 }
 
-port_err_t systick_deinit(timer_elect_t systick_timer)
+port_err_t systick_deinit(timer_select_t systick_timer)
 {
 	#ifdef AVR_AT32
 	if (systick_timer == TIMER_0)

@@ -8,11 +8,30 @@
 #include <avr/io.h>
 #include "ZeroX86.h"
 void OnIdle(void );
+OS_VoidT task1(OS_VoidT*arg)
+{
+	PORTA++;
+}
+OS_VoidT task2(OS_VoidT*arg)
+{
+	PORTB++;
+}
+OS_VoidT task3(OS_VoidT*arg) 
+{
+	PORTC++;
+}
 int main(void)
 {
-	OS_TaskHandlerT TstHandler;
-	
+	DDRA=DDRB=DDRC=DDRD=0xff;
+	OS_TaskHandlerT TstHandler1;
+	OS_TaskHandlerT TstHandler2;
+	OS_TaskHandlerT TstHandler3;
+	OS_SysInit(TIMER_0);
+	OS_CreateTask(TstHandler1,task1,50,1,20,"TSK1",5);
+	OS_CreateTask(TstHandler2,task2,100,2,30,"TSK2",9);
+	OS_CreateTask(TstHandler3,task3,25,3,25,"TSK3",4);
 
+	OS_SysRun();
 	
     while (1) 
     {
