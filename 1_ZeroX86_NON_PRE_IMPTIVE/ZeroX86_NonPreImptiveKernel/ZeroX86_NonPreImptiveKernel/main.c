@@ -4,7 +4,7 @@
  * Created: 11/24/2019 11:44:34 PM
  * Author : Mahmoud
  */ 
-
+//os prio self
 #include <avr/io.h>
 #include "ZeroX86.h"
 void OnIdle(void );
@@ -40,7 +40,7 @@ int main(void)
 
 void OnIdle(void )
 {
-	
+	PORTD++;
 }
 /*
 A new MSc program at our dept: Professional MSc at Electronics and Telecom at EECE dept, Cairo University

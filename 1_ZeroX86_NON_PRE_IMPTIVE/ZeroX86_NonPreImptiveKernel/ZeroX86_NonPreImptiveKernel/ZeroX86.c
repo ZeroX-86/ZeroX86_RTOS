@@ -42,7 +42,7 @@ OS_ReturnT OS_SysInit(timer_select_t systick_timer)
 	OS_SysClock = 0U;
 	OS_ListInit(&OS_RdyList);
 	OS_ListInit(&OS_DlyList);
-	OS_CreateTask(&IdleHandler,IdleTask,5,5,0,"tst",5);
+	OS_CreateTask(&IdleHandler,IdleTask,2,0,0,"tst",0);
 	//assign the call back to the tick func
 	systick_init(systick_timer,1000,OS_SysTick);
 }
@@ -182,12 +182,12 @@ static OS_VoidT OS_TaskTickCount(OS_VoidT* PVArg)
 static OS_VoidT OS_TaskExecute(OS_VoidT* PVArg)
 {
 	OS_Tcb* TempPtr = (OS_Tcb*)PVArg;
-	if (TASK_READY == TempPtr->TaskState)
-	{
+	//if (TASK_READY == TempPtr->TaskState)
+	//{
 		(*TempPtr->CodeHandler)(TempPtr->TaskArg);
 		TempPtr->TaskState = TASK_WAITING;
 		TempPtr->TaskTimeOut = TempPtr->TaskPeriod;
-	}
+	//}
 }
 static OS_ReturnT OS_ListInit(OS_TcbListT* TcbList)
 {
