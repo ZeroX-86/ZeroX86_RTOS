@@ -27,9 +27,9 @@ int main(void)
 	OS_TaskHandlerT TstHandler2;
 	OS_TaskHandlerT TstHandler3;
 	OS_SysInit(TIMER_0);
-	OS_CreateTask(TstHandler1,task1,50,1,20,"TSK1",5);
-	OS_CreateTask(TstHandler2,task2,100,2,30,"TSK2",9);
-	OS_CreateTask(TstHandler3,task3,25,3,25,"TSK3",4);
+	OS_CreateTask(&TstHandler1,task1,50,1,0,"TSK1",5);
+	OS_CreateTask(&TstHandler2,task2,100,2,30,"TSK2",9);
+	OS_CreateTask(&TstHandler3,task3,25,3,25,"TSK3",4);
 
 	OS_SysRun();
 	

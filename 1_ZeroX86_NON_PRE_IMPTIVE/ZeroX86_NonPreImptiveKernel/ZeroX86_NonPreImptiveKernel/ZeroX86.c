@@ -19,8 +19,6 @@ static OS_ReturnT OS_ListRemoveTask(OS_TcbListT* TcbList,OS_Tcb* Tcb);
 static OS_VoidT   OS_SysTick(OS_VoidT);
 static OS_VoidT   OS_TaskTickCount(OS_VoidT* PVArg);
 static OS_VoidT   OS_TaskExecute(OS_VoidT* PVArg);
-static OS_ReturnT OS_ListInit(OS_TcbListT* TcbList);
-static OS_ReturnT OS_ListInsertTask(OS_TcbListT* TcbList,OS_Tcb* Tcb);
 static OS_ReturnT OS_ListTraverse(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_VoidT* ));
 static OS_ReturnT OS_ListTraverseTop(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_VoidT* ));
 static OS_ReturnT OS_ListRemoveTask(OS_TcbListT* TcbList,OS_Tcb* Tcb);
@@ -42,11 +40,11 @@ OS_ReturnT OS_SysInit(timer_select_t systick_timer)
 	OS_SysClock = 0U;
 	OS_ListInit(&OS_RdyList);
 	OS_ListInit(&OS_DlyList);
-	OS_CreateTask(&IdleHandler,IdleTask,2,0,0,"tst",0);
+	//OS_CreateTask(&IdleHandler,IdleTask,2,0,0,"tst",0);
 	//assign the call back to the tick func
 	systick_init(systick_timer,1000,OS_SysTick);
 }
-OS_ReturnT OS_CreateTask(OS_TaskHandlerT TaskHandler,
+OS_ReturnT OS_CreateTask(OS_TaskHandlerT* TaskHandler,
 			         	 OS_CodeHandlerT CodeHandler,
 						 OS_Uint32T Period,OS_Uint8T Id,
 			        	 OS_Uint32T StartTime,OS_Uint8T Name[],
@@ -59,7 +57,7 @@ OS_ReturnT OS_CreateTask(OS_TaskHandlerT TaskHandler,
 	{
 		PtrTemp->TaskId = Id;
 		PtrTemp->TaskPeriod = Period;
-		TaskHandler = (OS_VoidT*)PtrTemp;
+		*TaskHandler = (OS_VoidT*)PtrTemp;
 		PtrTemp->TaskPriority = Priority;
 		PtrTemp->CodeHandler = CodeHandler;
 		PtrTemp->TaskTimeOut = StartTime + Period;
@@ -75,6 +73,7 @@ OS_ReturnT OS_CreateTask(OS_TaskHandlerT TaskHandler,
 	}
 	return OS_ERR_CNT_MALLOC;
 }
+
 OS_ReturnT OS_RemoveTask(OS_TaskHandlerT* TaskHandler)
 {
 	if (TaskHandler != OS_NULL)
@@ -195,7 +194,7 @@ static OS_ReturnT OS_ListInit(OS_TcbListT* TcbList)
 	{
 		TcbList->PtrCurrTask = OS_NULL;
 		TcbList->PtrListHead = OS_NULL;
-		TcbList->U8ListSize  = 0U;
+		TcbList->I8ListSize  = 0U;
 	} 
 	else
 	{
@@ -205,53 +204,48 @@ static OS_ReturnT OS_ListInit(OS_TcbListT* TcbList)
 }
 static OS_ReturnT OS_ListInsertTask(OS_TcbListT* TcbList,OS_Tcb* Tcb)
 {
-	if ((OS_NULL != TcbList) && (OS_NULL != Tcb))
-	{
-		if (OS_NULL == TcbList->PtrListHead)
-		{
-			TcbList->PtrListHead = Tcb;
-			Tcb->PtrNext = OS_NULL;
-			Tcb->PtrPrev = OS_NULL;
-		} 
-		else
-		{
-			OS_Tcb* TempPtr1 = OS_NULL;
-			OS_Tcb* TempPtr2 = OS_NULL;
-			OS_Uint8T TempIt = Tcb->TaskPriority;
-			for (TempPtr1 = TcbList->PtrListHead;
-				  ((TempPtr1->TaskPriority > TempIt) && TempPtr1 != OS_NULL);)
-			{
-				TempPtr2 = TempPtr1;
-				TempPtr1=TempPtr1->PtrNext;
-			}
-			if (OS_NULL == TempPtr1)
-			{
-				TempPtr2->PtrNext = Tcb;
+	if ((OS_NULL != TcbList) && (OS_NULL != Tcb)){
+		if(TcbList->I8ListSize < MAX_TASKS_NO){
+				TcbList->I8ListSize++; 
+			if (OS_NULL == TcbList->PtrListHead){
+				TcbList->PtrListHead = Tcb;
 				Tcb->PtrNext = OS_NULL;
-				Tcb->PtrPrev = TempPtr2;
+				Tcb->PtrPrev = OS_NULL;
+			} 
+			else{
+				OS_Tcb* TempPtr1 = OS_NULL;
+				OS_Tcb* TempPtr2 = OS_NULL;
+				OS_Uint8T TempIt = Tcb->TaskPriority;
+				for (TempPtr1 = TcbList->PtrListHead;((TempPtr1->TaskPriority >= TempIt) && TempPtr1 != OS_NULL);TempPtr1=TempPtr1->PtrNext){
+					TempPtr2 = TempPtr1;
+				}
+				if (OS_NULL == TempPtr1){
+					TempPtr2->PtrNext = Tcb;
+					Tcb->PtrNext = OS_NULL;
+					Tcb->PtrPrev = TempPtr2;
+				}
+				else{
+					Tcb->PtrNext = TempPtr1;
+					Tcb->PtrPrev = TempPtr2;
+					TempPtr2->PtrNext = Tcb;
+					TempPtr1->PtrPrev = Tcb;
+				}						
 			}
-			else
-			{
-				Tcb->PtrNext = TempPtr1;
-				Tcb->PtrPrev = TempPtr2;
-				TempPtr2->PtrNext = Tcb;
-			}						
 		}
-		TcbList->U8ListSize++;
+		else{
+			return OS_ERR_LIST_FULL;
+		}
 	} 
-	else
-	{
+	else{
 		return OS_ERR_INV_PARAMS;
 	}
 	return OS_ERR_NO;
 }
 static OS_ReturnT OS_ListTraverse(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_VoidT* ))
 {
-	if ((OS_NULL != TcbList) && (OS_NULL != PtrFunc))
-	{
+	if ((OS_NULL != TcbList) && (OS_NULL != PtrFunc)){
 		OS_Tcb* TemPtr = TcbList->PtrListHead;
-		while(OS_NULL != TemPtr)
-		{
+		while(OS_NULL != TemPtr){
 			(*PtrFunc)((OS_VoidT*)TemPtr);
 			TemPtr = TemPtr->PtrNext;
 		}
@@ -261,11 +255,9 @@ static OS_ReturnT OS_ListTraverse(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_Voi
 }
 static OS_ReturnT OS_ListTraverseTop(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_VoidT* ))
 {
-	if ((OS_NULL != TcbList) && (OS_NULL != PtrFunc))
-	{
+	if ((OS_NULL != TcbList) && (OS_NULL != PtrFunc)){
 		OS_Tcb* TemPtr = TcbList->PtrListHead;
-		while(OS_NULL != TemPtr)
-		{
+		while(OS_NULL != TemPtr){
 			(*PtrFunc)((OS_VoidT*)TemPtr);
 			OS_ListRemoveTask(&OS_RdyList,TemPtr);
 			OS_ListInsertTask(&OS_DlyList,TemPtr);
@@ -277,32 +269,33 @@ static OS_ReturnT OS_ListTraverseTop(OS_TcbListT* TcbList,OS_VoidT(*PtrFunc)(OS_
 }
 static OS_ReturnT OS_ListRemoveTask(OS_TcbListT* TcbList,OS_Tcb* Tcb)
 {
-	if ((OS_NULL != TcbList) && (OS_NULL != Tcb))
-	{
-		if (OS_NULL == TcbList->PtrListHead)
-		{
+	if ((OS_NULL != TcbList) && (OS_NULL != Tcb)){
+		if (OS_NULL == TcbList->PtrListHead){
 			return OS_ERR_LIST_EMPTY;
 		}
-		else
-		{
-			OS_Tcb* TempPtr1 = OS_NULL;
-			OS_Uint8T TempIt = Tcb->TaskPriority;
-			for (TempPtr1 = TcbList->PtrListHead;
-			((TempPtr1->TaskPriority != TempIt) && TempPtr1 != OS_NULL);)
-			{
-				TempPtr1=TempPtr1->PtrNext;
+		else{
+			if(0U > TcbList->I8ListSize){
+				TcbList->I8ListSize--;
+				OS_Tcb* TempPtr1 = OS_NULL;
+				OS_Uint8T TempIt = Tcb->TaskPriority;
+				for (TempPtr1 = TcbList->PtrListHead; \
+				((TempPtr1->TaskPriority != TempIt) && TempPtr1 != OS_NULL);){
+					TempPtr1=TempPtr1->PtrNext;
+				}
+				if (OS_NULL == TempPtr1){
+					return OS_ERR_LIST_NOT_FOUND;
+				}
+				else{
+					if (TempPtr1->PtrNext != OS_NULL){
+						TempPtr1->PtrNext->PtrPrev = TempPtr1->PtrPrev;
+					}
+					TempPtr1->PtrPrev->PtrNext = TempPtr1->PtrNext;
+				}
 			}
-			if (OS_NULL == TempPtr1)
-			{
-				return OS_ERR_LIST_NOT_FOUND;
-			}
-			else
-			{
-				TempPtr1->PtrNext->PtrPrev = TempPtr1->PtrPrev;
-				TempPtr1->PtrPrev->PtrNext = TempPtr1->PtrNext;
+			else{
+				return OS_ERR_LIST_EMPTY;
 			}
 		}
-		TcbList->U8ListSize--;
 	}
 	else
 	{

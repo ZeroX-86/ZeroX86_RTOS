@@ -12,9 +12,11 @@
 
 #ifndef ZEROX86_H_
 #define ZEROX86_H_
+
 #include "ZeroXPort.h"
 #include <stdlib.h>
 #include <string.h>
+
 typedef          void	OS_VoidT;
 typedef signed   char	OS_Int8T ;
 typedef unsigned char	OS_Uint8T ;
@@ -46,8 +48,8 @@ typedef struct ctrlBlock
 	OS_Uint8T			TaskId;	//task id
 	OS_Uint8T			TaskState;	//task state
 	OS_VoidT*			TaskArg;
-	OS_Uint32T			TaskPeriod;	//??
-	OS_Uint32T			TaskTimeOut;	//timeout delay down-counter
+	OS_Int32T			TaskPeriod;	//??
+	OS_Int32T			TaskTimeOut;	//timeout delay down-counter
 	OS_CodeHandlerT     CodeHandler;	//pointer to a task handler
 	OS_Uint8T			TaskName[MAX_TASK_NAME_LENGTH];	//task name
 	OS_Uint32T			TaskExecTime;	//variable to store the task exec time if enabled
@@ -57,13 +59,14 @@ typedef struct
 {
 	OS_Tcb*		PtrListHead;	//the highest-priority task
 	OS_Tcb*		PtrCurrTask;	//the currently active task
-	OS_Uint8T	U8ListSize;		//the no of tasks in the sys
+	OS_Int8T	I8ListSize;		//the no of tasks in the sys
 }OS_TcbListT;
 
 typedef enum {
 	OS_ERR_NO,
 	OS_ERR_INV_PARAMS,
 	OS_ERR_LIST_EMPTY,
+	OS_ERR_LIST_FULL,
 	OS_ERR_LIST_NOT_FOUND,
 	OS_ERR_CNT_MALLOC,
 	OS_ERR_LIST_X,	//when having any error with the list operations
@@ -79,7 +82,7 @@ typedef enum {
 //#define CREATE_TASK(HANDLE, PRIORITY, ID, TASKCB, NAME) TaskEnteryT HANDLE={.TaskPriority=PRIORITY,.TaskId=ID,.TaskCB=TASKCB,.TaskName=NAME};
 OS_ReturnT OS_SysInit(timer_select_t systick_timer);
 OS_ReturnT OS_SysRun(OS_VoidT);
-OS_ReturnT OS_CreateTask(OS_TaskHandlerT TaskHandler,
+OS_ReturnT OS_CreateTask(OS_TaskHandlerT* TaskHandler,
 					     OS_CodeHandlerT CodeHandler,
 					   	 OS_Uint32T Period,OS_Uint8T Id,
 					     OS_Uint32T StartTime,OS_Uint8T Name[],

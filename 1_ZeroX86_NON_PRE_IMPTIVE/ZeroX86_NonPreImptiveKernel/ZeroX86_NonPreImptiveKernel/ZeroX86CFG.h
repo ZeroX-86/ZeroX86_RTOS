@@ -15,10 +15,10 @@
 
 #define AVR_AT32
 //uncomment only the directive represents your MCU
-#define AVR_AT32
+//#define AVR_AT32
 #define F_CPU 8000000UL
 
-//#define MAX_TASKS_NO 5
+#define MAX_TASKS_NO 5
 
 //#define MEANINGLESS_VAL 5	//it's used as the resolution but it's not implemented yet :(
 // #define PIC_PI18
